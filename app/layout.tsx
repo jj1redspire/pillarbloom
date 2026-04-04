@@ -1,23 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-playfair',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: 'PillarBloom — Turn One Piece of Content Into 30+ Outputs',
   description: 'PillarBloom uses AI to repurpose your best content into LinkedIn posts, email campaigns, tweet threads, lead magnets, and more — in minutes.',
+  icons: { icon: '/favicon.svg' },
   openGraph: {
     title: 'PillarBloom — Turn One Piece of Content Into 30+ Outputs',
     description: 'AI-powered content repurposing. One input. 30+ outputs. Minutes, not hours.',
@@ -26,14 +13,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} h-full`}>
-      <body className={`${inter.className} antialiased min-h-full flex flex-col`}>
+    <html lang="en" className="h-full">
+      <body className="antialiased min-h-full flex flex-col">
         {children}
       </body>
     </html>

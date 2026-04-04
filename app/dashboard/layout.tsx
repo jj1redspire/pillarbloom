@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 import DashboardNav from '@/components/dashboard/DashboardNav'
 
 export default async function DashboardLayout({
@@ -22,19 +23,19 @@ export default async function DashboardLayout({
     .single()
 
   const planLabel = profile?.plan === 'trial'
-    ? `Trial (${daysLeft(profile?.trial_ends_at)} days left)`
+    ? `Trial — ${daysLeft(profile?.trial_ends_at)}d left`
     : profile?.plan || 'trial'
 
   return (
-    <div className="min-h-screen bg-[#F3F1ED] flex flex-col">
+    <div className="min-h-screen bg-[#fafafa] flex flex-col">
       {/* Top nav */}
-      <header className="bg-white border-b border-[#E8E6E1] sticky top-0 z-40">
+      <header className="bg-white border-b border-[#e8eaed] sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/dashboard" className="font-semibold text-[#0F1B2D] text-base">
-            Pillar<span className="text-[#C6A04E]">Bloom</span>
+          <Link href="/dashboard">
+            <Logo variant="dark" width={140} />
           </Link>
           <div className="flex items-center gap-4">
-            <span className="hidden md:block text-xs font-medium text-[#717185] bg-[#F3F1ED] px-3 py-1 rounded-full capitalize">
+            <span className="hidden md:block text-xs font-medium text-[#6B7280] bg-[#fafafa] border border-[#e8eaed] px-3 py-1 rounded-full capitalize">
               {planLabel}
             </span>
             <DashboardNav email={user.email || ''} />
@@ -45,7 +46,7 @@ export default async function DashboardLayout({
       {/* Sidebar + content */}
       <div className="flex-1 flex max-w-7xl mx-auto w-full px-6 py-8 gap-8">
         {/* Sidebar */}
-        <aside className="hidden md:flex flex-col w-52 shrink-0 gap-1">
+        <aside className="hidden md:flex flex-col w-48 shrink-0 gap-0.5">
           <SidebarLink href="/dashboard" label="Projects" icon="📁" />
           <SidebarLink href="/dashboard/new" label="New Project" icon="✨" />
           <SidebarLink href="/dashboard/settings" label="Settings" icon="⚙️" />
@@ -64,9 +65,9 @@ function SidebarLink({ href, label, icon }: { href: string; label: string; icon:
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#4A4A5A] hover:bg-white hover:text-[#0F1B2D] transition-colors"
+      className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-[#6B7280] hover:bg-white hover:text-[#1B2A4A] hover:shadow-sm transition-all"
     >
-      <span>{icon}</span>
+      <span className="text-base">{icon}</span>
       {label}
     </Link>
   )

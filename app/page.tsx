@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 const OUTPUT_TYPES = [
   { icon: '💼', label: 'LinkedIn Post' },
@@ -88,19 +89,18 @@ const FAQS = [
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
+
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#E8E6E1]">
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#e8eaed]">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="font-semibold text-[#0F1B2D] text-lg tracking-tight">
-            Pillar<span className="text-[#C6A04E]">Bloom</span>
-          </span>
+          <Logo variant="dark" width={160} />
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm text-[#717185] hover:text-[#0F1B2D] transition-colors">
+            <Link href="/login" className="text-sm text-[#6B7280] hover:text-[#1B2A4A] transition-colors font-medium">
               Log in
             </Link>
             <Link
               href="/signup"
-              className="bg-[#0F1B2D] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#1B3A5C] transition-colors"
+              className="bg-[#C6A04E] hover:bg-[#D4B574] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
             >
               Start free trial
             </Link>
@@ -109,18 +109,24 @@ export default function HomePage() {
       </nav>
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="bg-[#0F1B2D] text-white pt-20 pb-24 px-6">
+
+        {/* Hero — white background */}
+        <section className="bg-white pt-20 pb-24 px-6 border-b border-[#e8eaed]">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-[#C6A04E]/15 border border-[#C6A04E]/30 rounded-full px-4 py-1.5 mb-8">
+            <div className="inline-flex items-center gap-2 bg-[#C6A04E]/10 border border-[#C6A04E]/25 rounded-full px-4 py-1.5 mb-8">
               <span className="w-2 h-2 rounded-full bg-[#C6A04E] inline-block"></span>
               <span className="text-[#C6A04E] text-xs font-semibold uppercase tracking-widest">14-day free trial — no card required</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
+
+            <div className="flex justify-center mb-8">
+              <Logo variant="dark" width={280} />
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-semibold text-[#1B2A4A] mb-6 leading-tight tracking-tight">
               One piece of content.<br />
               <span className="text-[#C6A04E]">30+ outputs.</span> Zero effort.
             </h1>
-            <p className="text-lg md:text-xl text-blue-200 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-[#6B7280] mb-10 max-w-2xl mx-auto leading-relaxed">
               PillarBloom turns your best content — blog posts, podcasts, case studies — into a full content calendar across every channel. In minutes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -128,19 +134,20 @@ export default function HomePage() {
                 href="/signup"
                 className="bg-[#C6A04E] hover:bg-[#D4B574] text-white font-semibold px-8 py-4 rounded-lg text-base transition-colors"
               >
-                Start free — 14 days free →
+                Start free — 14 days →
               </Link>
               <Link
                 href="#how-it-works"
-                className="border border-white/20 hover:border-white/40 text-white font-semibold px-8 py-4 rounded-lg text-base transition-colors"
+                className="border border-[#e8eaed] hover:border-[#1B2A4A]/30 text-[#1B2A4A] font-semibold px-8 py-4 rounded-lg text-base transition-colors"
               >
                 See how it works
               </Link>
             </div>
+
             {/* Output type pills */}
             <div className="flex flex-wrap gap-2 justify-center mt-12">
               {OUTPUT_TYPES.map((t) => (
-                <span key={t.label} className="flex items-center gap-1.5 bg-white/10 text-blue-100 text-sm px-3 py-1.5 rounded-full border border-white/10">
+                <span key={t.label} className="flex items-center gap-1.5 bg-[#fafafa] text-[#374151] text-sm px-3 py-1.5 rounded-full border border-[#e8eaed]">
                   <span>{t.icon}</span>
                   <span>{t.label}</span>
                 </span>
@@ -150,12 +157,12 @@ export default function HomePage() {
         </section>
 
         {/* Social proof bar */}
-        <section className="bg-[#F3F1ED] py-6 px-6 border-b border-[#E8E6E1]">
-          <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-sm text-[#717185]">
-            <span>✓ No credit card required</span>
-            <span>✓ Powered by Claude AI</span>
-            <span>✓ 8 output categories</span>
-            <span>✓ Results in under 2 minutes</span>
+        <section className="bg-[#fafafa] py-5 px-6 border-b border-[#e8eaed]">
+          <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 text-sm text-[#6B7280]">
+            <span className="flex items-center gap-1.5"><span className="text-[#C6A04E]">✓</span> No credit card required</span>
+            <span className="flex items-center gap-1.5"><span className="text-[#C6A04E]">✓</span> Powered by Claude AI</span>
+            <span className="flex items-center gap-1.5"><span className="text-[#C6A04E]">✓</span> 8 output categories</span>
+            <span className="flex items-center gap-1.5"><span className="text-[#C6A04E]">✓</span> Results in under 2 minutes</span>
           </div>
         </section>
 
@@ -164,18 +171,18 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <p className="text-xs font-semibold uppercase tracking-widest text-[#C6A04E] mb-3">How It Works</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#0F1B2D]" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
+              <h2 className="text-3xl md:text-4xl font-semibold text-[#1B2A4A] tracking-tight">
                 From one input to a full content library
               </h2>
             </div>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-6">
               {HOW_IT_WORKS.map((step) => (
-                <div key={step.step} className="bg-[#FAFAF8] rounded-xl p-8 border border-[#E8E6E1]">
-                  <div className="text-3xl font-bold text-[#C6A04E]/40 mb-4" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
+                <div key={step.step} className="bg-[#fafafa] rounded-xl p-8 border border-[#e8eaed]">
+                  <div className="text-3xl font-semibold text-[#C6A04E]/30 mb-4 tabular-nums">
                     {step.step}
                   </div>
-                  <h3 className="font-semibold text-[#0F1B2D] text-lg mb-2">{step.title}</h3>
-                  <p className="text-[#717185] text-sm leading-relaxed">{step.desc}</p>
+                  <h3 className="font-semibold text-[#1B2A4A] text-lg mb-2">{step.title}</h3>
+                  <p className="text-[#6B7280] text-sm leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -183,22 +190,22 @@ export default function HomePage() {
         </section>
 
         {/* Output showcase */}
-        <section className="py-24 px-6 bg-[#F3F1ED]">
+        <section className="py-24 px-6 bg-[#fafafa] border-y border-[#e8eaed]">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <p className="text-xs font-semibold uppercase tracking-widest text-[#C6A04E] mb-3">What You Get</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#0F1B2D]" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
+              <h2 className="text-3xl md:text-4xl font-semibold text-[#1B2A4A] tracking-tight">
                 Every format. Every channel.
               </h2>
-              <p className="text-[#717185] mt-4 max-w-xl mx-auto">
+              <p className="text-[#6B7280] mt-4 max-w-xl mx-auto">
                 Paste one piece of content and get outputs tailored to each platform&apos;s format and best practices.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {OUTPUT_TYPES.map((t) => (
-                <div key={t.label} className="bg-white rounded-xl p-6 border border-[#E8E6E1] text-center hover:shadow-md transition-shadow">
+                <div key={t.label} className="bg-white rounded-xl p-6 border border-[#e8eaed] text-center hover:shadow-sm transition-shadow hover:border-[#C6A04E]/30">
                   <div className="text-3xl mb-3">{t.icon}</div>
-                  <div className="font-semibold text-[#0F1B2D] text-sm">{t.label}</div>
+                  <div className="font-medium text-[#1B2A4A] text-sm">{t.label}</div>
                 </div>
               ))}
             </div>
@@ -208,21 +215,21 @@ export default function HomePage() {
         {/* Pricing */}
         <section id="pricing" className="py-24 px-6 bg-white">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-4">
+            <div className="text-center mb-12">
               <p className="text-xs font-semibold uppercase tracking-widest text-[#C6A04E] mb-3">Pricing</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#0F1B2D]" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
+              <h2 className="text-3xl md:text-4xl font-semibold text-[#1B2A4A] tracking-tight">
                 Simple, honest pricing
               </h2>
-              <p className="text-[#717185] mt-4">14-day free trial on every plan. No credit card required.</p>
+              <p className="text-[#6B7280] mt-4">14-day free trial on every plan. No credit card required.</p>
             </div>
-            <div className="grid md:grid-cols-3 gap-6 mt-12">
+            <div className="grid md:grid-cols-3 gap-6">
               {PLANS.map((plan) => (
                 <div
                   key={plan.name}
-                  className={`rounded-xl p-8 border ${
+                  className={`rounded-xl p-8 border relative ${
                     plan.highlight
-                      ? 'bg-[#0F1B2D] text-white border-[#0F1B2D] shadow-xl relative'
-                      : 'bg-white border-[#E8E6E1]'
+                      ? 'bg-[#1B2A4A] text-white border-[#1B2A4A] shadow-lg'
+                      : 'bg-white border-[#e8eaed]'
                   }`}
                 >
                   {plan.highlight && (
@@ -230,16 +237,16 @@ export default function HomePage() {
                       <span className="bg-[#C6A04E] text-white text-xs font-semibold px-3 py-1 rounded-full">Most Popular</span>
                     </div>
                   )}
-                  <p className={`text-sm font-semibold mb-1 ${plan.highlight ? 'text-[#C6A04E]' : 'text-[#717185]'}`}>{plan.name}</p>
+                  <p className={`text-xs font-semibold uppercase tracking-widest mb-2 ${plan.highlight ? 'text-[#C6A04E]' : 'text-[#6B7280]'}`}>{plan.name}</p>
                   <div className="flex items-baseline gap-1 mb-1">
-                    <span className={`text-4xl font-bold ${plan.highlight ? 'text-white' : 'text-[#0F1B2D]'}`} style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>{plan.price}</span>
-                    <span className={`text-sm ${plan.highlight ? 'text-blue-300' : 'text-[#717185]'}`}>{plan.period}</span>
+                    <span className={`text-4xl font-semibold tracking-tight ${plan.highlight ? 'text-white' : 'text-[#1B2A4A]'}`}>{plan.price}</span>
+                    <span className={`text-sm ${plan.highlight ? 'text-blue-300' : 'text-[#6B7280]'}`}>{plan.period}</span>
                   </div>
-                  <p className={`text-sm mb-6 ${plan.highlight ? 'text-blue-200' : 'text-[#717185]'}`}>{plan.desc}</p>
-                  <ul className="space-y-2 mb-8">
+                  <p className={`text-sm mb-6 ${plan.highlight ? 'text-blue-200' : 'text-[#6B7280]'}`}>{plan.desc}</p>
+                  <ul className="space-y-2.5 mb-8">
                     {plan.features.map((f) => (
-                      <li key={f} className={`flex items-center gap-2 text-sm ${plan.highlight ? 'text-blue-100' : 'text-[#4A4A5A]'}`}>
-                        <svg className={`w-4 h-4 flex-shrink-0 ${plan.highlight ? 'text-[#C6A04E]' : 'text-[#C6A04E]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <li key={f} className={`flex items-center gap-2 text-sm ${plan.highlight ? 'text-blue-100' : 'text-[#374151]'}`}>
+                        <svg className="w-4 h-4 flex-shrink-0 text-[#C6A04E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         {f}
@@ -251,7 +258,7 @@ export default function HomePage() {
                     className={`block text-center font-semibold px-6 py-3 rounded-lg text-sm transition-colors ${
                       plan.highlight
                         ? 'bg-[#C6A04E] hover:bg-[#D4B574] text-white'
-                        : 'border border-[#0F1B2D] text-[#0F1B2D] hover:bg-[#F3F1ED]'
+                        : 'border border-[#1B2A4A] text-[#1B2A4A] hover:bg-[#fafafa]'
                     }`}
                   >
                     {plan.cta}
@@ -263,28 +270,31 @@ export default function HomePage() {
         </section>
 
         {/* FAQ */}
-        <section className="py-24 px-6 bg-[#F3F1ED]">
+        <section className="py-24 px-6 bg-[#fafafa] border-t border-[#e8eaed]">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[#0F1B2D]" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
+              <h2 className="text-3xl font-semibold text-[#1B2A4A] tracking-tight">
                 Frequently asked questions
               </h2>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {FAQS.map((faq) => (
-                <div key={faq.q} className="bg-white rounded-xl p-6 border border-[#E8E6E1]">
-                  <h3 className="font-semibold text-[#0F1B2D] mb-2">{faq.q}</h3>
-                  <p className="text-[#717185] text-sm leading-relaxed">{faq.a}</p>
+                <div key={faq.q} className="bg-white rounded-xl p-6 border border-[#e8eaed]">
+                  <h3 className="font-semibold text-[#1B2A4A] mb-2">{faq.q}</h3>
+                  <p className="text-[#6B7280] text-sm leading-relaxed">{faq.a}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="bg-[#0F1B2D] py-20 px-6 text-white text-center">
+        {/* Final CTA — one navy band */}
+        <section className="bg-[#1B2A4A] py-20 px-6 text-white text-center">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
+            <div className="flex justify-center mb-6">
+              <Logo variant="light" width={200} />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4 tracking-tight">
               Stop leaving content on the table.
             </h2>
             <p className="text-blue-200 mb-8 text-lg">
@@ -300,20 +310,19 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#0A1220] text-blue-300 py-10 px-6">
+      {/* Footer — light */}
+      <footer className="bg-white border-t border-[#e8eaed] py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-          <span className="font-semibold text-white">
-            Pillar<span className="text-[#C6A04E]">Bloom</span>
-          </span>
-          <div className="flex gap-6">
-            <Link href="/login" className="hover:text-white transition-colors">Log in</Link>
-            <Link href="/signup" className="hover:text-white transition-colors">Sign up</Link>
-            <a href="mailto:hello@pillarbloom.com" className="hover:text-white transition-colors">Contact</a>
+          <Logo variant="dark" width={140} />
+          <div className="flex gap-6 text-[#6B7280]">
+            <Link href="/login" className="hover:text-[#1B2A4A] transition-colors">Log in</Link>
+            <Link href="/signup" className="hover:text-[#1B2A4A] transition-colors">Sign up</Link>
+            <a href="mailto:hello@pillarbloom.com" className="hover:text-[#1B2A4A] transition-colors">Contact</a>
           </div>
-          <span className="text-blue-400">© 2026 PillarBloom. All rights reserved.</span>
+          <span className="text-[#9CA3AF]">© 2026 PillarBloom. All rights reserved.</span>
         </div>
       </footer>
+
     </div>
   )
 }
