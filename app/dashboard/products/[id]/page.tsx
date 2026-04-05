@@ -16,6 +16,19 @@ const PRODUCT_LABELS: Record<string, { title: string; icon: string }> = {
 type Output = { id: string; type: string; content: string; is_edited: boolean }
 type Project = { id: string; title: string; source_content: string; selected_types: string[]; status: string; created_at: string }
 
+function stripMarkdown(md: string): string {
+  return md
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+    .replace(/^>\s+/gm, '')
+    .replace(/`{1,3}([^`]+)`{1,3}/g, '$1')
+    .replace(/^[-*+]\s+/gm, '• ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 export default function ProductViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const searchParams = useSearchParams()
@@ -28,9 +41,11 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
   const [streaming, setStreaming] = useState(false)
   const [streamText, setStreamText] = useState('')
   const [editContent, setEditContent] = useState<Record<string, string>>({})
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [regenTab, setRegenTab] = useState<string | null>(null)
+  const [regenStream, setRegenStream] = useState('')
 
   const loadProject = useCallback(async () => {
     const supabase = createClient()
@@ -98,28 +113,18 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
         buffer += decoder.decode(value, { stream: true })
         const lines = buffer.split('\n')
         buffer = lines.pop() || ''
-
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6)
-            if (data === '[DONE]') {
-              setStreaming(false)
-              await loadProject()
-              return
-            }
+            if (data === '[DONE]') { setStreaming(false); await loadProject(); return }
             try {
               const parsed = JSON.parse(data)
               if (parsed.text) setStreamText((prev) => prev + parsed.text)
-              if (parsed.error) {
-                setError(parsed.error)
-                setStreaming(false)
-                return
-              }
+              if (parsed.error) { setError(parsed.error); setStreaming(false); return }
             } catch { /* ignore */ }
           }
         }
       }
-
       setStreaming(false)
       await loadProject()
     } catch (err) {
@@ -128,11 +133,51 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
     }
   }, [loadProject])
 
+  async function regenOutput(type: string) {
+    if (!project) return
+    setRegenTab(type)
+    setRegenStream('')
+
+    try {
+      const response = await fetch('/api/regenerate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: project.id, outputType: type, projectKind: 'product' }),
+      })
+
+      if (!response.ok) throw new Error('Regeneration failed')
+
+      const reader = response.body!.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6)
+            if (data === '[DONE]') { setRegenTab(null); await loadProject(); return }
+            try {
+              const parsed = JSON.parse(data)
+              if (parsed.text) setRegenStream((prev) => prev + parsed.text)
+            } catch { /* ignore */ }
+          }
+        }
+      }
+      setRegenTab(null)
+      await loadProject()
+    } catch {
+      setRegenTab(null)
+    }
+  }
+
   useEffect(() => {
     loadProject().then((proj) => {
-      if (proj && shouldGenerate && proj.status === 'generating') {
-        startGeneration(proj)
-      }
+      if (proj && shouldGenerate && proj.status === 'generating') startGeneration(proj)
     })
   }, [loadProject, shouldGenerate, startGeneration])
 
@@ -146,19 +191,17 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
       .eq('id', output.id)
   }
 
-  async function copyToClipboard(text: string) {
+  async function copy(text: string, kind: string) {
     await navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    setCopied(kind)
+    setTimeout(() => setCopied(null), 2000)
   }
 
-  function downloadAsText(content: string, filename: string) {
+  function download(content: string, filename: string) {
     const blob = new Blob([content], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = url
-    a.download = `${filename}.txt`
-    a.click()
+    a.href = url; a.download = `${filename}.txt`; a.click()
     URL.revokeObjectURL(url)
   }
 
@@ -166,9 +209,7 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
     return (
       <div className="flex items-center justify-center py-24">
         <div className="flex gap-1">
-          {[1, 2, 3].map((i) => (
-            <span key={i} className="typing-dot w-2 h-2 rounded-full bg-[#C6A04E] inline-block" />
-          ))}
+          {[1,2,3].map((i) => <span key={i} className="typing-dot w-2 h-2 rounded-full bg-[#C6A04E] inline-block" />)}
         </div>
       </div>
     )
@@ -178,6 +219,8 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
 
   const tabs = (project.selected_types ?? []).filter((t) => PRODUCT_LABELS[t])
   const currentOutput = outputs.find((o) => o.type === activeTab)
+  const currentText = editContent[activeTab] || currentOutput?.content || ''
+  const isRegenerating = regenTab === activeTab
 
   return (
     <div>
@@ -191,26 +234,21 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
         </div>
         {!streaming && project.status !== 'complete' && (
           <button onClick={() => startGeneration(project)} className="text-sm font-medium text-[#C6A04E] hover:underline">
-            Regenerate
+            Generate all
           </button>
         )}
       </div>
 
-      {/* Streaming indicator */}
       {streaming && (
         <div className="bg-[#1B2A4A] rounded-xl p-6 mb-6 text-white">
           <div className="flex items-center gap-3 mb-3">
             <div className="flex gap-1">
-              {[1, 2, 3].map((i) => (
-                <span key={i} className="typing-dot w-2 h-2 rounded-full bg-[#C6A04E] inline-block" />
-              ))}
+              {[1,2,3].map((i) => <span key={i} className="typing-dot w-2 h-2 rounded-full bg-[#C6A04E] inline-block" />)}
             </div>
             <span className="text-sm font-medium text-blue-200">Building your digital products…</span>
           </div>
           <div className="bg-white/5 rounded-lg p-4 max-h-44 overflow-y-auto">
-            <pre className="text-xs text-blue-100 whitespace-pre-wrap font-mono leading-relaxed">
-              {streamText || 'Analyzing your content…'}
-            </pre>
+            <pre className="text-xs text-blue-100 whitespace-pre-wrap font-mono leading-relaxed">{streamText || 'Analyzing your content…'}</pre>
           </div>
           <p className="text-xs text-blue-300 mt-2">This takes 30–90 seconds depending on products selected. Don&apos;t close this tab.</p>
         </div>
@@ -239,15 +277,18 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
                 <button
                   key={key}
                   onClick={() => setActiveTab(key)}
-                  disabled={!hasOutput}
+                  disabled={!hasOutput && regenTab !== key}
                   className={`flex items-center gap-1.5 px-4 py-3.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
                     activeTab === key
                       ? 'border-[#C6A04E] text-[#1B2A4A] bg-white'
                       : 'border-transparent text-[#6B7280] hover:text-[#1B2A4A]'
-                  } ${!hasOutput ? 'opacity-40 cursor-not-allowed' : ''}`}
+                  } ${!hasOutput && regenTab !== key ? 'opacity-40 cursor-not-allowed' : ''}`}
                 >
                   <span>{icon}</span>
                   {title}
+                  {regenTab === key && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C6A04E] inline-block animate-pulse ml-0.5" />
+                  )}
                 </button>
               )
             })}
@@ -255,41 +296,72 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
 
           {/* Content */}
           <div className="p-6">
-            {currentOutput ? (
+            {isRegenerating ? (
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex gap-1">
+                    {[1,2,3].map((i) => <span key={i} className="typing-dot w-1.5 h-1.5 rounded-full bg-[#C6A04E] inline-block" />)}
+                  </div>
+                  <span className="text-xs text-[#6B7280]">Regenerating {PRODUCT_LABELS[activeTab]?.title}…</span>
+                </div>
+                <div className="bg-[#fafafa] border border-[#e8eaed] rounded-xl px-4 py-3 min-h-40 max-h-96 overflow-y-auto">
+                  <pre className="text-xs text-[#6B7280] whitespace-pre-wrap font-mono leading-relaxed">{regenStream || 'Analyzing your content…'}</pre>
+                </div>
+              </div>
+            ) : currentOutput ? (
               <div className="animate-fade-in">
-                <div className="flex items-center justify-between mb-4">
+                {/* Action bar */}
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                   <h2 className="font-semibold text-[#1B2A4A] text-sm">
                     {PRODUCT_LABELS[activeTab]?.title}
                     {currentOutput.is_edited && <span className="ml-2 text-xs text-[#9CA3AF] font-normal">· edited</span>}
                   </h2>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <button
-                      onClick={() => downloadAsText(editContent[activeTab] || currentOutput.content, `${project.title}-${activeTab}`)}
-                      className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] hover:text-[#1B2A4A] bg-[#fafafa] hover:bg-[#f0f0f0] border border-[#e8eaed] px-3 py-1.5 rounded-lg transition-colors"
+                      onClick={() => regenOutput(activeTab)}
+                      className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] hover:text-[#1B2A4A] bg-[#fafafa] hover:bg-[#f0f0f0] border border-[#e8eaed] px-2.5 py-1.5 rounded-lg transition-colors"
                     >
-                      ↓ Download
+                      ↻ Re-generate
                     </button>
                     <button
-                      onClick={() => copyToClipboard(editContent[activeTab] || currentOutput.content)}
-                      className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] hover:text-[#1B2A4A] bg-[#fafafa] hover:bg-[#f0f0f0] border border-[#e8eaed] px-3 py-1.5 rounded-lg transition-colors"
+                      onClick={() => copy(currentText, 'md')}
+                      className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] hover:text-[#1B2A4A] bg-[#fafafa] hover:bg-[#f0f0f0] border border-[#e8eaed] px-2.5 py-1.5 rounded-lg transition-colors"
                     >
-                      {copied ? '✓ Copied!' : '📋 Copy'}
+                      {copied === 'md' ? '✓ Copied!' : '📋 Copy Markdown'}
+                    </button>
+                    <button
+                      onClick={() => copy(stripMarkdown(currentText), 'plain')}
+                      className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] hover:text-[#1B2A4A] bg-[#fafafa] hover:bg-[#f0f0f0] border border-[#e8eaed] px-2.5 py-1.5 rounded-lg transition-colors"
+                    >
+                      {copied === 'plain' ? '✓ Copied!' : '📄 Copy Plain Text'}
+                    </button>
+                    <button
+                      onClick={() => download(currentText, `${project.title}-${activeTab}`)}
+                      className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] hover:text-[#1B2A4A] bg-[#fafafa] hover:bg-[#f0f0f0] border border-[#e8eaed] px-2.5 py-1.5 rounded-lg transition-colors"
+                    >
+                      ↓ Download
                     </button>
                   </div>
                 </div>
 
                 <textarea
-                  value={editContent[activeTab] ?? currentOutput.content}
+                  value={currentText}
                   onChange={(e) => setEditContent((prev) => ({ ...prev, [activeTab]: e.target.value }))}
                   onBlur={() => saveEdit(activeTab)}
-                  rows={28}
+                  rows={30}
                   className="w-full bg-[#fafafa] border border-[#e8eaed] rounded-xl px-4 py-3 text-sm text-[#1B2A4A] focus:outline-none focus:ring-2 focus:ring-[#C6A04E] focus:border-transparent resize-none leading-relaxed font-mono"
                 />
                 <p className="text-xs text-[#9CA3AF] mt-2">Click to edit. Changes save automatically when you click away.</p>
               </div>
             ) : (
-              <div className="text-center py-12 text-[#9CA3AF] text-sm">
-                {streaming ? 'Generating…' : 'Output not available'}
+              <div className="text-center py-12">
+                <p className="text-sm text-[#9CA3AF] mb-3">Not yet generated</p>
+                <button
+                  onClick={() => regenOutput(activeTab)}
+                  className="text-xs font-medium text-[#C6A04E] hover:underline"
+                >
+                  Generate {PRODUCT_LABELS[activeTab]?.title} →
+                </button>
               </div>
             )}
           </div>

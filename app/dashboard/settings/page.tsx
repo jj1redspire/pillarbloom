@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import BillingButton from '@/components/dashboard/BillingButton'
+import VoiceSettings from '@/components/dashboard/VoiceSettings'
 
 const PLANS = [
   {
@@ -34,7 +35,7 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('plan, trial_ends_at, stripe_customer_id, repurposes_used_this_month, pieces_used_this_month, products_used_this_month')
+    .select('plan, trial_ends_at, stripe_customer_id, repurposes_used_this_month, pieces_used_this_month, products_used_this_month, voice_profile')
     .eq('id', user!.id)
     .single()
 
@@ -48,6 +49,17 @@ export default async function SettingsPage() {
   return (
     <div className="max-w-2xl space-y-5">
       <h1 className="text-2xl font-semibold text-[#1B2A4A] tracking-tight">Settings</h1>
+
+      {/* Brand Voice card */}
+      <div className="bg-white rounded-xl border border-[#e8eaed] p-6">
+        <div className="mb-5">
+          <h2 className="font-semibold text-[#1B2A4A] mb-1 text-sm uppercase tracking-wide">Brand Voice</h2>
+          <p className="text-sm text-[#6B7280] leading-relaxed">
+            Teach PillarBloom your writing style. Every output — content repurposes and digital products — will match your voice instead of sounding like generic AI.
+          </p>
+        </div>
+        <VoiceSettings initialProfile={profile?.voice_profile ?? null} />
+      </div>
 
       {/* Account card */}
       <div className="bg-white rounded-xl border border-[#e8eaed] p-6">

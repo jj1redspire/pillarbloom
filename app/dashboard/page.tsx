@@ -47,7 +47,7 @@ export default async function DashboardPage() {
       </div>
 
       {!hasAny ? (
-        <WelcomeState />
+        <OnboardingState />
       ) : (
         <div className="grid lg:grid-cols-5 gap-6">
           {/* Content projects — wider column */}
@@ -165,47 +165,92 @@ function EmptyCard({ icon, title, desc, href, cta }: { icon: string; title: stri
   )
 }
 
-function WelcomeState() {
+function OnboardingState() {
+  const steps = [
+    { n: '1', label: 'Paste your content', desc: 'A blog post, transcript, framework, or any expertise-rich writing.' },
+    { n: '2', label: 'Choose your outputs', desc: 'Pick from 8 social formats or 6 digital product types — or both.' },
+    { n: '3', label: 'Watch it generate', desc: 'Claude reads your content and builds everything in 30–60 seconds.' },
+    { n: '4', label: 'Copy and publish', desc: 'Edit inline, copy as markdown or plain text, download — done.' },
+  ]
+
   return (
-    <div className="grid sm:grid-cols-2 gap-5 mt-2">
-      {/* Content engine card */}
+    <div className="space-y-6">
+      {/* Step journey */}
       <div className="bg-white border border-[#e8eaed] rounded-2xl p-8">
-        <div className="w-10 h-10 bg-[#1B2A4A]/5 rounded-xl flex items-center justify-center mb-4 text-xl">✨</div>
-        <h2 className="font-semibold text-[#1B2A4A] text-lg mb-2 tracking-tight">Content Engine</h2>
-        <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
-          Paste one piece of content and get 30+ outputs — LinkedIn posts, tweet threads, newsletters, email campaigns, and more.
-        </p>
-        <div className="flex flex-wrap gap-1.5 mb-6">
-          {['LinkedIn Post', 'Tweet Thread', 'Newsletter', 'Email Campaign', 'Key Quotes', '+ more'].map((t) => (
-            <span key={t} className="text-xs bg-[#fafafa] border border-[#e8eaed] text-[#6B7280] px-2.5 py-1 rounded-full">{t}</span>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#9CA3AF] mb-6">How it works</p>
+        <div className="grid sm:grid-cols-4 gap-4 mb-8">
+          {steps.map((step, i) => (
+            <div key={step.n} className="relative">
+              {i < steps.length - 1 && (
+                <div className="hidden sm:block absolute top-4 left-[calc(50%+16px)] right-0 h-px bg-[#e8eaed]" />
+              )}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-8 h-8 rounded-full bg-[#1B2A4A] text-white text-sm font-semibold flex items-center justify-center mb-3 relative z-10">
+                  {step.n}
+                </div>
+                <p className="text-sm font-semibold text-[#1B2A4A] mb-1">{step.label}</p>
+                <p className="text-xs text-[#6B7280] leading-relaxed">{step.desc}</p>
+              </div>
+            </div>
           ))}
         </div>
-        <Link
-          href="/dashboard/new"
-          className="block text-center bg-[#1B2A4A] hover:bg-[#2D4270] text-white font-semibold px-6 py-3 rounded-lg text-sm transition-colors"
-        >
-          Start repurposing →
-        </Link>
+
+        {/* Voice profile nudge */}
+        <div className="bg-[#C6A04E]/6 border border-[#C6A04E]/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+          <span className="text-[#C6A04E] text-lg leading-none mt-0.5">✦</span>
+          <div>
+            <p className="text-sm font-semibold text-[#1B2A4A] mb-0.5">Set up your Brand Voice first</p>
+            <p className="text-xs text-[#6B7280] leading-relaxed">
+              Paste 3–5 samples of your existing writing in{' '}
+              <Link href="/dashboard/settings" className="text-[#C6A04E] font-medium hover:underline">Settings → Brand Voice</Link>
+              {' '}and every output will sound like you — not like AI.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link
+            href="/dashboard/new"
+            className="flex-1 block text-center bg-[#1B2A4A] hover:bg-[#2D4270] text-white font-semibold px-6 py-3.5 rounded-xl text-sm transition-colors"
+          >
+            ✨ Start repurposing content →
+          </Link>
+          <Link
+            href="/dashboard/products/new"
+            className="flex-1 block text-center bg-[#C6A04E] hover:bg-[#D4B574] text-white font-semibold px-6 py-3.5 rounded-xl text-sm transition-colors"
+          >
+            🎁 Create a digital product →
+          </Link>
+        </div>
       </div>
 
-      {/* Product engine card */}
-      <div className="bg-white border border-[#e8eaed] rounded-2xl p-8">
-        <div className="w-10 h-10 bg-[#C6A04E]/10 rounded-xl flex items-center justify-center mb-4 text-xl">🎁</div>
-        <h2 className="font-semibold text-[#1B2A4A] text-lg mb-2 tracking-tight">Product Engine</h2>
-        <p className="text-[#6B7280] text-sm leading-relaxed mb-5">
-          Transform your expertise into sellable digital products — ebooks, mini-courses, email courses, workbooks, and sales copy.
-        </p>
-        <div className="flex flex-wrap gap-1.5 mb-6">
-          {['Ebook', 'Mini-Course', 'Email Course', 'Workbook', 'Checklist', 'Sales Copy'].map((t) => (
-            <span key={t} className="text-xs bg-[#fafafa] border border-[#e8eaed] text-[#6B7280] px-2.5 py-1 rounded-full">{t}</span>
-          ))}
+      {/* What you can create — product type preview */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div className="bg-white border border-[#e8eaed] rounded-2xl p-6">
+          <div className="w-9 h-9 bg-[#1B2A4A]/5 rounded-xl flex items-center justify-center mb-3 text-lg">✨</div>
+          <h2 className="font-semibold text-[#1B2A4A] mb-1.5 tracking-tight">Content Engine</h2>
+          <p className="text-[#6B7280] text-xs leading-relaxed mb-4">
+            Paste once, get 8 ready-to-publish formats across every platform you use.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {['LinkedIn Post', 'Tweet Thread', 'Newsletter', 'Email Campaign', 'Video Script', 'Lead Magnet', 'Key Quotes', 'Exec Summary'].map((t) => (
+              <span key={t} className="text-xs bg-[#fafafa] border border-[#e8eaed] text-[#6B7280] px-2 py-0.5 rounded-full">{t}</span>
+            ))}
+          </div>
         </div>
-        <Link
-          href="/dashboard/products/new"
-          className="block text-center bg-[#C6A04E] hover:bg-[#D4B574] text-white font-semibold px-6 py-3 rounded-lg text-sm transition-colors"
-        >
-          Create first product →
-        </Link>
+
+        <div className="bg-white border border-[#e8eaed] rounded-2xl p-6">
+          <div className="w-9 h-9 bg-[#C6A04E]/10 rounded-xl flex items-center justify-center mb-3 text-lg">🎁</div>
+          <h2 className="font-semibold text-[#1B2A4A] mb-1.5 tracking-tight">Product Engine</h2>
+          <p className="text-[#6B7280] text-xs leading-relaxed mb-4">
+            Turn your expertise into sellable products with complete structure and copy.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {['Ebook', 'Mini-Course', 'Email Course', 'Workbook', 'Checklist', 'Sales Copy'].map((t) => (
+              <span key={t} className="text-xs bg-[#fafafa] border border-[#e8eaed] text-[#6B7280] px-2 py-0.5 rounded-full">{t}</span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
