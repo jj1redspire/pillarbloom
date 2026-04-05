@@ -143,6 +143,13 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: proj.source_content, projectId: proj.id }),
       })
+
+      if (response.status === 429) {
+        const data = await response.json()
+        setError(`You've used all ${data.limit} repurposes this month (${data.used}/${data.limit}). Upgrade your plan to continue.`)
+        setStreaming(false)
+        return
+      }
       if (!response.ok) throw new Error('Generation failed')
 
       const reader = response.body!.getReader()
@@ -323,9 +330,13 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
-          {error}
-          <button onClick={() => startGeneration(project)} className="ml-3 font-semibold underline">Try again</button>
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4 flex items-center justify-between gap-3 flex-wrap">
+          <span>{error}</span>
+          {error.includes('limit') || error.includes('Upgrade') ? (
+            <a href="/dashboard/settings" className="font-semibold underline whitespace-nowrap">Upgrade plan →</a>
+          ) : (
+            <button onClick={() => startGeneration(project)} className="font-semibold underline whitespace-nowrap">Try again</button>
+          )}
         </div>
       )}
 

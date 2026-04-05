@@ -82,7 +82,25 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
           {/* Usage */}
           <div className="mb-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#9CA3AF] px-3 mb-1">Usage</p>
+            <div className="flex items-center justify-between px-3 mb-2">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#9CA3AF]">Usage</p>
+              <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                ['pro', 'creator', 'agency'].includes(plan)
+                  ? 'bg-green-50 text-green-700 border-green-200'
+                  : plan === 'starter'
+                  ? 'bg-[#C6A04E]/10 text-[#C6A04E] border-[#C6A04E]/25'
+                  : plan === 'trial'
+                  ? 'bg-blue-50 text-blue-600 border-blue-200'
+                  : 'bg-[#fafafa] text-[#9CA3AF] border-[#e8eaed]'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${
+                  ['pro', 'creator', 'agency'].includes(plan) ? 'bg-green-400' :
+                  plan === 'starter' ? 'bg-[#C6A04E]' :
+                  plan === 'trial' ? 'bg-blue-400' : 'bg-[#9CA3AF]'
+                }`} />
+                {plan.charAt(0).toUpperCase() + plan.slice(1)}
+              </span>
+            </div>
             <UsageBar
               label="Repurposes"
               used={repurposesUsed}

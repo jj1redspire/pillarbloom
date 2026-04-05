@@ -19,12 +19,28 @@ export async function POST(request: Request) {
     return new Response('Content too short', { status: 400 })
   }
 
-  // Fetch voice profile
+  // Fetch profile — plan, usage, voice
   const { data: profile } = await supabase
     .from('profiles')
     .select('plan, repurposes_used_this_month, pieces_used_this_month, voice_profile')
     .eq('id', user.id)
     .single()
+
+  // ── Repurpose limit enforcement ──────────────────────────────────────────
+  const REPURPOSE_LIMITS: Record<string, number> = {
+    free: 3, trial: 99, starter: 15, pro: 999, creator: 999, agency: 999, expired: 0,
+  }
+  const plan = profile?.plan ?? 'trial'
+  const repurposesUsed = profile?.repurposes_used_this_month ?? profile?.pieces_used_this_month ?? 0
+  const repurposeLimit = REPURPOSE_LIMITS[plan] ?? 3
+  const isUnlimitedRepurposes = ['pro', 'creator', 'agency'].includes(plan)
+
+  if (!isUnlimitedRepurposes && repurposesUsed >= repurposeLimit) {
+    return Response.json(
+      { error: 'limit_reached', plan, used: repurposesUsed, limit: repurposeLimit },
+      { status: 429 }
+    )
+  }
 
   const voiceProfile = profile?.voice_profile
   const voiceInstruction = voiceProfile
@@ -87,6 +103,14 @@ ${outputSections}`
         }
 
         await saveOutputs(supabase, projectId, fullText)
+
+        // Increment monthly counter for metered plans
+        if (!isUnlimitedRepurposes) {
+          await supabase
+            .from('profiles')
+            .update({ repurposes_used_this_month: repurposesUsed + 1 })
+            .eq('id', user.id)
+        }
 
         controller.enqueue(encoder.encode('data: [DONE]\n\n'))
         controller.close()

@@ -1,9 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ upgraded?: string; plan?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const params = await searchParams
+  const justUpgraded = params.upgraded === 'true'
+  const upgradedPlan = params.plan ?? ''
 
   const [{ data: projects }, { data: productProjects }] = await Promise.all([
     supabase
@@ -24,6 +31,30 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {/* Upgraded success banner */}
+      {justUpgraded && (
+        <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-4">
+          <div className="w-8 h-8 rounded-full bg-green-100 border border-green-200 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-green-800">
+              {upgradedPlan
+                ? `Welcome to ${upgradedPlan.charAt(0).toUpperCase() + upgradedPlan.slice(1)}!`
+                : 'Plan upgraded successfully!'}
+            </p>
+            <p className="text-xs text-green-700 mt-0.5">
+              Your new limits are active. Start generating content and products.
+            </p>
+          </div>
+          <Link href="/dashboard/settings" className="text-xs font-semibold text-green-700 hover:text-green-900 underline whitespace-nowrap flex-shrink-0">
+            View plan →
+          </Link>
+        </div>
+      )}
+
       {/* Header + CTAs */}
       <div className="flex items-start justify-between">
         <div>

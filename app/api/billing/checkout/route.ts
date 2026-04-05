@@ -2,26 +2,26 @@ import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request) {
+  // Lazy init — Stripe client created inside handler, not at module scope
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
-  const PRICE_IDS: Record<string, string> = {
-    starter: process.env.STRIPE_PRICE_STARTER!,
-    pro: process.env.STRIPE_PRICE_PRO!,
-    agency: process.env.STRIPE_PRICE_AGENCY!,
+  const PRICE_IDS: Record<string, string | undefined> = {
+    starter: process.env.STRIPE_PRICE_STARTER,
+    pro:     process.env.STRIPE_PRICE_PRO,
+    creator: process.env.STRIPE_PRICE_CREATOR,
+    // legacy alias kept for backward compat
+    agency:  process.env.STRIPE_PRICE_AGENCY ?? process.env.STRIPE_PRICE_CREATOR,
   }
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { plan } = await request.json()
   const priceId = PRICE_IDS[plan]
 
-  if (!priceId || priceId.startsWith('price_') && priceId.includes('placeholder')) {
-    return Response.json({ error: 'Plan not configured' }, { status: 400 })
+  if (!priceId || priceId.includes('placeholder')) {
+    return Response.json({ error: 'This plan is not yet configured. Price IDs must be set in Stripe.' }, { status: 400 })
   }
 
   // Get or create Stripe customer
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     mode: 'subscription',
     payment_method_types: ['card'],
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${baseUrl}/dashboard?upgraded=true`,
+    success_url: `${baseUrl}/dashboard?upgraded=true&plan=${plan}`,
     cancel_url: `${baseUrl}/dashboard/settings`,
     subscription_data: {
       trial_period_days: 14,
