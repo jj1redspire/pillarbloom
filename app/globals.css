@@ -10,6 +10,9 @@
   --color-border: #e8eaed;
   --color-muted: #6B7280;
   --color-body: #374151;
+
+  --font-display: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -23,9 +26,13 @@ html {
 body {
   background: #ffffff;
   color: #1B2A4A;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: var(--font-playfair), 'Playfair Display', Georgia, serif;
 }
 
 :focus-visible {
@@ -34,6 +41,7 @@ body {
   border-radius: 4px;
 }
 
+/* ── Existing animations ── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -60,4 +68,148 @@ body {
   background: linear-gradient(90deg, #f5f5f5 25%, #ebebeb 50%, #f5f5f5 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+/* ── Landing page animations ── */
+
+/* Stream in — lines appearing in hero mockup */
+@keyframes stream-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-stream-in {
+  animation: stream-in 0.25s ease forwards;
+  opacity: 0;
+}
+
+/* Fade up — section entrance */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+.animate-fade-up-delay-1 { animation-delay: 0.1s; }
+.animate-fade-up-delay-2 { animation-delay: 0.2s; }
+.animate-fade-up-delay-3 { animation-delay: 0.3s; }
+.animate-fade-up-delay-4 { animation-delay: 0.4s; }
+.animate-fade-up-delay-5 { animation-delay: 0.5s; }
+
+/* Float — mockup subtle hover */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Gold glow pulse on primary CTA */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(198, 160, 78, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(198, 160, 78, 0); }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Slide in from left/right for before-after */
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Gold underline decoration */
+.headline-gold-line {
+  position: relative;
+  display: inline;
+}
+.headline-gold-line::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #C6A04E;
+  border-radius: 2px;
+}
+
+/* Dot-grid background for hero */
+.bg-dot-grid {
+  background-image: radial-gradient(circle, #e8eaed 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Gradient mesh background for CTA section */
+.bg-navy-gradient {
+  background: linear-gradient(135deg, #1B2A4A 0%, #0f1e38 50%, #1B2A4A 100%);
+}
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(27, 42, 74, 0.10);
+}
+
+/* Gold border on hover */
+.gold-hover-border {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.gold-hover-border:hover {
+  border-color: #C6A04E;
+  box-shadow: 0 0 0 3px rgba(198, 160, 78, 0.12);
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 4px;
+  background: #e8eaed;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #C6A04E;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(198, 160, 78, 0.4);
+  transition: box-shadow 0.15s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 2px 16px rgba(198, 160, 78, 0.6);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #C6A04E;
+  cursor: pointer;
+  border: none;
 }
