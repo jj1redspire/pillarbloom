@@ -10,8 +10,9 @@ function SignupForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const plan = searchParams.get('plan') || 'starter'
+  const emailParam = searchParams.get('email') || ''
 
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(emailParam)
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)

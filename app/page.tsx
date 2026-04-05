@@ -4,6 +4,7 @@ import Logo from '@/components/Logo'
 import HeroMockup from '@/components/landing/HeroMockup'
 import ROICalculator from '@/components/landing/ROICalculator'
 import PricingSection from '@/components/landing/PricingSection'
+import EmailCaptureForm from '@/components/landing/EmailCaptureForm'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://pillarbloom.com'
 
@@ -116,19 +117,17 @@ export default function LandingPage() {
                 Join early adopters who&apos;ve stopped doing this manually.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 animate-fade-up animate-fade-up-delay-4">
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center gap-2 bg-[#C6A04E] hover:bg-[#D4B574] text-white font-semibold px-8 py-4 rounded-xl text-base transition-all shadow-lg shadow-[#C6A04E]/25 hover:shadow-[#C6A04E]/40 hover:-translate-y-0.5"
-                >
-                  Start Free — No card needed
-                </Link>
-                <a
-                  href="#demo"
-                  className="inline-flex items-center justify-center gap-2 border-2 border-[#1B2A4A] text-[#1B2A4A] hover:bg-[#1B2A4A] hover:text-white font-semibold px-8 py-4 rounded-xl text-base transition-all"
-                >
-                  Watch It Work ↓
-                </a>
+              <div className="animate-fade-up animate-fade-up-delay-4 max-w-lg">
+                <EmailCaptureForm
+                  source="hero"
+                  placeholder="Enter your email — free trial, no card needed"
+                  buttonText="Start Free →"
+                  variant="light"
+                />
+                <p className="text-xs text-[#9CA3AF] mt-2.5 text-center sm:text-left">
+                  No credit card required · Or{' '}
+                  <a href="#demo" className="underline hover:text-[#6B7280] transition-colors">see it in action first ↓</a>
+                </p>
               </div>
 
               <div className="flex flex-wrap gap-2 mt-7 animate-fade-up animate-fade-up-delay-5">
@@ -552,12 +551,14 @@ export default function LandingPage() {
             Free to start. No credit card required. First product in under 5 minutes.
           </p>
 
-          <Link
-            href="/signup"
-            className="inline-flex items-center justify-center gap-2 bg-[#C6A04E] hover:bg-[#D4B574] text-white font-bold px-10 py-5 rounded-xl text-lg transition-all shadow-xl shadow-[#C6A04E]/30 hover:-translate-y-0.5 animate-glow-pulse"
-          >
-            Create Your Free Account
-          </Link>
+          <div className="max-w-md mx-auto">
+            <EmailCaptureForm
+              source="cta"
+              placeholder="Enter your email"
+              buttonText="Create Free Account →"
+              variant="dark"
+            />
+          </div>
 
           <p className="text-white/40 text-sm mt-5">Join early adopters already using PillarBloom</p>
 
