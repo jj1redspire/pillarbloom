@@ -1,8 +1,23 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import HeroMockup from '@/components/landing/HeroMockup'
 import ROICalculator from '@/components/landing/ROICalculator'
 import PricingSection from '@/components/landing/PricingSection'
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://pillarbloom.com'
+
+export const metadata: Metadata = {
+  title: 'PillarBloom — Turn Your Expertise Into Content AND Income',
+  description: 'Paste once. Get 30 days of social media content AND sellable digital products. Ebooks, courses, workbooks, email sequences — all in your voice.',
+  alternates: { canonical: BASE_URL },
+  openGraph: {
+    title: 'PillarBloom — Turn Your Expertise Into Content AND Income',
+    description: 'Paste once. Get 30 days of social media content AND sellable digital products.',
+    url: BASE_URL,
+    type: 'website',
+  },
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SECTION HELPERS
@@ -28,9 +43,28 @@ function SectionHeading({ children, light = false }: { children: React.ReactNode
 // PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'PillarBloom',
+  url: 'https://pillarbloom.com',
+  logo: 'https://pillarbloom.com/favicon.svg',
+  description: 'AI-powered content repurposing and digital product creation platform. Turn one piece of content into 30+ social posts and sellable digital products — in your voice.',
+  sameAs: [],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    url: 'https://pillarbloom.com',
+  },
+}
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
 
       {/* NAV */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#e8eaed]">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -17,15 +18,45 @@ const dmSans = DM_Sans({
   weight: ['300', '400', '500', '600', '700'],
 })
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://pillarbloom.com'
+
 export const metadata: Metadata = {
-  title: 'PillarBloom — Turn Your Expertise Into Content AND Income',
-  description: 'One paste. 30 days of social content. Sellable digital products. All in your voice. PillarBloom replaces Repurpose.io, Designrr, and ChatGPT in one subscription.',
-  icons: { icon: '/favicon.svg' },
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'PillarBloom — Turn Your Expertise Into Content AND Income',
+    template: '%s',
+  },
+  description: 'Paste once. Get 30 days of social media content AND sellable digital products. Ebooks, courses, workbooks, email sequences — all in your voice.',
+  keywords: [
+    'content repurposing', 'digital products', 'ebook generator', 'AI content creation',
+    'course creator', 'content marketing', 'repurpose content', 'digital product creator',
+  ],
+  authors: [{ name: 'PillarBloom' }],
+  creator: 'PillarBloom',
+  publisher: 'PillarBloom',
   openGraph: {
-    title: 'PillarBloom — Turn Your Expertise Into Content AND Income',
-    description: 'AI-powered content repurposing AND digital product creation. One input. Everything you need to publish and sell.',
     type: 'website',
     siteName: 'PillarBloom',
+    title: 'PillarBloom — Turn Your Expertise Into Content AND Income',
+    description: 'Paste once. Get 30 days of social content AND sellable digital products. All in your voice.',
+    url: BASE_URL,
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'PillarBloom — Turn Your Expertise Into Content AND Income' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PillarBloom — Turn Your Expertise Into Content AND Income',
+    description: 'Paste once. Get 30 days of content AND sellable digital products. All in your voice.',
+    images: ['/opengraph-image'],
+    creator: '@pillarbloom',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  icons: { icon: '/favicon.svg' },
+  alternates: {
+    canonical: BASE_URL,
   },
 }
 
@@ -33,6 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${playfair.variable} ${dmSans.variable} h-full`}>
       <body className="antialiased min-h-full flex flex-col">
+        <GoogleAnalytics />
         {children}
       </body>
     </html>

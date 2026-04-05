@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import DashboardNav from '@/components/dashboard/DashboardNav'
 import UsageBar from '@/components/dashboard/UsageBar'
+
+export const metadata: Metadata = {
+  title: 'Dashboard — PillarBloom',
+  robots: { index: false, follow: false },
+}
 
 const PLAN_LIMITS: Record<string, { repurposes: number; products: number; unlimitedRepurposes: boolean; unlimitedProducts: boolean }> = {
   free:     { repurposes: 3,   products: 0,  unlimitedRepurposes: false, unlimitedProducts: false },
