@@ -10,10 +10,13 @@ export async function POST(request: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
-  const { projectId, outputType, projectKind } = await request.json()
+  const { projectId, outputType, projectKind, feedback } = await request.json()
   if (!projectId || !outputType || !projectKind) {
     return new Response('Missing required fields', { status: 400 })
   }
+  const feedbackInstruction = feedback?.trim()
+    ? `\n\nUSER FEEDBACK — apply this to the regenerated output:\n"${feedback.trim()}"\nKeep the same structure and format but incorporate this feedback exactly.`
+    : ''
 
   // Load project source content
   const table = projectKind === 'product' ? 'digital_product_projects' : 'projects'
@@ -51,7 +54,7 @@ export async function POST(request: Request) {
     ? `You are a digital product creation expert. Transform the user's source content into a professional, sellable digital product. The output should be comprehensive, well-structured, and ready for the creator to sell or use as a lead magnet. Format with clear headings, sections, and actionable content.${voiceInstruction}`
     : `You are an expert content strategist and copywriter. Your job is to repurpose source content into the requested format while preserving the core message, terminology, and positioning. Create platform-native content that is complete and ready to publish with minor tweaks.${voiceInstruction}`
 
-  const userPrompt = `SOURCE CONTENT:\n${project.source_content}\n\n---\n\nGenerate ONLY this single output type. Start immediately with the section marker, then the content.\n\n${marker}\n\n${promptDef.prompt}`
+  const userPrompt = `SOURCE CONTENT:\n${project.source_content}\n\n---\n\nGenerate ONLY this single output type. Start immediately with the section marker, then the content.\n\n${marker}\n\n${promptDef.prompt}${feedbackInstruction}`
 
   const encoder = new TextEncoder()
   const outputsTable = isProduct ? 'digital_product_outputs' : 'outputs'

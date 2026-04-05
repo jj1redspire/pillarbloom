@@ -107,6 +107,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
           {/* Bottom */}
           <div className="mt-auto pt-4 border-t border-[#e8eaed]">
+            <SidebarLink href="/dashboard/templates" label="Templates" icon="📁" />
             <SidebarLink href="/dashboard/settings" label="Settings" icon="⚙️" />
           </div>
         </aside>
