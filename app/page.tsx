@@ -78,7 +78,7 @@ export default function LandingPage() {
           </div>
           <Link
             href="/signup"
-            className="bg-[#C6A04E] hover:bg-[#D4B574] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all animate-glow-pulse"
+            className="bg-[#C6A04E] hover:bg-[#D4B574] text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all animate-glow-pulse min-h-[44px] inline-flex items-center"
           >
             Start Free →
           </Link>
@@ -90,8 +90,8 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-dot-grid opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#C6A04E]/8 blur-3xl pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-6 pt-20 pb-24 md:pt-28 md:pb-32">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative max-w-7xl mx-auto px-6 pt-14 pb-16 md:pt-28 md:pb-32">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
             {/* Left — Copy */}
             <div>
@@ -100,7 +100,7 @@ export default function LandingPage() {
                 <span className="text-xs font-medium text-[#6B7280]">Join early creators — first 100 get 50% off for life</span>
               </div>
 
-              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold text-[#1B2A4A] tracking-tight leading-[1.05] mb-6 animate-fade-up animate-fade-up-delay-1">
+              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#1B2A4A] tracking-tight leading-[1.05] mb-6 animate-fade-up animate-fade-up-delay-1">
                 Turn Your Expertise Into{' '}
                 <em className="not-italic text-[#C6A04E]">Content</em>{' '}
                 <span className="block">
@@ -114,7 +114,7 @@ export default function LandingPage() {
               </p>
 
               <p className="text-sm text-[#9CA3AF] mb-9 animate-fade-up animate-fade-up-delay-3">
-                Join early adopters who&apos;ve stopped doing this manually.
+                First 100 creators get 50% off for life — 12 spots left.
               </p>
 
               <div className="animate-fade-up animate-fade-up-delay-4 max-w-lg">
@@ -560,7 +560,7 @@ export default function LandingPage() {
             />
           </div>
 
-          <p className="text-white/40 text-sm mt-5">Join early adopters already using PillarBloom</p>
+          <p className="text-white/40 text-sm mt-5">Joining 100+ early creators already building with PillarBloom</p>
 
           <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-white/50">
             <span className="flex items-center gap-2"><span className="text-[#C6A04E]">✓</span> No credit card required</span>

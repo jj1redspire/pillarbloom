@@ -86,6 +86,7 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
   const [error, setError] = useState('')
   const [regenTab, setRegenTab] = useState<string | null>(null)
   const [regenStream, setRegenStream] = useState('')
+  const [regenError, setRegenError] = useState('')
   const [voiceProfile, setVoiceProfile] = useState<VoiceProfile | null>(null)
 
   // Feedback
@@ -191,6 +192,7 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
     if (!project) return
     setRegenTab(type)
     setRegenStream('')
+    setRegenError('')
     setShowFeedback(false)
     setFeedbackText('')
 
@@ -227,6 +229,7 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
       await loadProject()
     } catch {
       setRegenTab(null)
+      setRegenError('Regeneration failed. Please try again.')
     }
   }
 
@@ -378,6 +381,13 @@ export default function ProductViewPage({ params }: { params: Promise<{ id: stri
 
           {/* Content */}
           <div className="p-6">
+            {regenError && (
+              <div className="mb-4 flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600">
+                <span>⚠</span>
+                <span>{regenError}</span>
+                <button onClick={() => setRegenError('')} className="ml-auto text-red-400 hover:text-red-600">✕</button>
+              </div>
+            )}
             {isRegenerating ? (
               <div>
                 <div className="flex items-center gap-2 mb-4">

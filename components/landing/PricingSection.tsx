@@ -105,7 +105,7 @@ export default function PricingSection() {
       </div>
 
       {/* Cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 pt-5">
         {PLANS.map((plan) => {
           const price = annual ? plan.annualPrice : plan.monthlyPrice
           return (
@@ -113,7 +113,7 @@ export default function PricingSection() {
               key={plan.key}
               className={`relative rounded-2xl p-6 flex flex-col transition-all duration-200 ${
                 plan.highlight
-                  ? 'bg-[#1B2A4A] text-white shadow-xl scale-[1.03] ring-2 ring-[#C6A04E]'
+                  ? 'bg-[#1B2A4A] text-white shadow-xl sm:scale-[1.03] ring-2 ring-[#C6A04E]'
                   : 'bg-white border border-[#e8eaed] hover:border-[#C6A04E]/40 hover:-translate-y-1 hover:shadow-lg'
               }`}
             >
