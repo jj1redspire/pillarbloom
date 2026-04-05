@@ -1,91 +1,138 @@
 import { createClient } from '@/lib/supabase/server'
 import BillingButton from '@/components/dashboard/BillingButton'
 
+const PLANS = [
+  {
+    key: 'starter',
+    name: 'Starter',
+    price: '$49',
+    repurposes: '15/month',
+    products: '1/month',
+    highlight: false,
+  },
+  {
+    key: 'pro',
+    name: 'Pro',
+    price: '$99',
+    repurposes: 'Unlimited',
+    products: '5/month',
+    highlight: true,
+  },
+  {
+    key: 'creator',
+    name: 'Creator',
+    price: '$149',
+    repurposes: 'Unlimited',
+    products: 'Unlimited',
+    highlight: false,
+  },
+]
+
 export default async function SettingsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('plan, trial_ends_at, stripe_customer_id, pieces_used_this_month')
+    .select('plan, trial_ends_at, stripe_customer_id, repurposes_used_this_month, pieces_used_this_month, products_used_this_month')
     .eq('id', user!.id)
     .single()
 
   const plan = profile?.plan || 'trial'
+  const isPaid = ['starter', 'pro', 'creator', 'agency'].includes(plan)
   const isTrial = plan === 'trial'
   const isExpired = plan === 'expired'
+  const repurposesUsed = profile?.repurposes_used_this_month ?? profile?.pieces_used_this_month ?? 0
+  const productsUsed = profile?.products_used_this_month ?? 0
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-[#0F1B2D] mb-6" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
-        Settings
-      </h1>
+    <div className="max-w-2xl space-y-5">
+      <h1 className="text-2xl font-semibold text-[#1B2A4A] tracking-tight">Settings</h1>
 
-      {/* Account */}
-      <div className="bg-white rounded-xl border border-[#E8E6E1] p-6 mb-4">
-        <h2 className="font-semibold text-[#0F1B2D] mb-4">Account</h2>
-        <div className="space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-[#717185]">Email</span>
-            <span className="text-[#0F1B2D] font-medium">{user?.email}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-[#717185]">Plan</span>
-            <span className="capitalize font-medium text-[#0F1B2D]">{plan}</span>
-          </div>
+      {/* Account card */}
+      <div className="bg-white rounded-xl border border-[#e8eaed] p-6">
+        <h2 className="font-semibold text-[#1B2A4A] mb-4 text-sm uppercase tracking-wide">Account</h2>
+        <div className="space-y-3">
+          <Row label="Email" value={user?.email ?? ''} />
+          <Row label="Plan" value={plan.charAt(0).toUpperCase() + plan.slice(1)} />
           {isTrial && profile?.trial_ends_at && (
-            <div className="flex justify-between">
-              <span className="text-[#717185]">Trial ends</span>
-              <span className="text-[#0F1B2D] font-medium">
-                {new Date(profile.trial_ends_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </span>
-            </div>
+            <Row
+              label="Trial ends"
+              value={new Date(profile.trial_ends_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            />
           )}
-          <div className="flex justify-between">
-            <span className="text-[#717185]">Projects this month</span>
-            <span className="text-[#0F1B2D] font-medium">{profile?.pieces_used_this_month ?? 0}</span>
-          </div>
         </div>
       </div>
 
-      {/* Billing */}
-      <div className="bg-white rounded-xl border border-[#E8E6E1] p-6">
-        <h2 className="font-semibold text-[#0F1B2D] mb-4">Billing</h2>
+      {/* Usage card */}
+      <div className="bg-white rounded-xl border border-[#e8eaed] p-6">
+        <h2 className="font-semibold text-[#1B2A4A] mb-4 text-sm uppercase tracking-wide">This Month&apos;s Usage</h2>
+        <div className="space-y-3">
+          <Row label="Content repurposes used" value={String(repurposesUsed)} />
+          <Row label="Digital products generated" value={String(productsUsed)} />
+        </div>
+      </div>
 
-        {(isTrial || isExpired) ? (
+      {/* Billing card */}
+      <div className="bg-white rounded-xl border border-[#e8eaed] p-6">
+        <h2 className="font-semibold text-[#1B2A4A] mb-1 text-sm uppercase tracking-wide">Billing</h2>
+
+        {isPaid && profile?.stripe_customer_id ? (
           <div>
-            <p className="text-sm text-[#717185] mb-4">
-              {isExpired
-                ? 'Your trial has expired. Upgrade to continue using PillarBloom.'
-                : 'You\'re on the free trial. Upgrade anytime to keep your projects and unlock unlimited access.'}
-            </p>
-            <div className="grid grid-cols-3 gap-3">
-              <PlanCard name="Starter" price="$29" plan="starter" highlight={false} />
-              <PlanCard name="Pro" price="$79" plan="pro" highlight={true} />
-              <PlanCard name="Agency" price="$199" plan="agency" highlight={false} />
-            </div>
-          </div>
-        ) : profile?.stripe_customer_id ? (
-          <div>
-            <p className="text-sm text-[#717185] mb-4">
-              Manage your subscription, update payment method, or cancel.
-            </p>
+            <p className="text-sm text-[#6B7280] mb-4">Manage subscription, update payment, or cancel anytime.</p>
             <BillingButton />
           </div>
         ) : (
-          <p className="text-sm text-[#717185]">No billing information on file.</p>
+          <div>
+            <p className="text-sm text-[#6B7280] mb-5">
+              {isExpired
+                ? 'Your trial has expired. Upgrade to continue generating content and products.'
+                : isTrial
+                ? "You're on a free trial. Upgrade to unlock your full monthly limits."
+                : 'Choose a plan that fits your workflow.'}
+            </p>
+
+            <div className="grid sm:grid-cols-3 gap-4 mb-4">
+              {PLANS.map((p) => (
+                <div
+                  key={p.key}
+                  className={`rounded-xl border p-5 ${p.highlight ? 'border-[#C6A04E] bg-[#C6A04E]/5 shadow-sm' : 'border-[#e8eaed]'}`}
+                >
+                  {p.highlight && (
+                    <span className="inline-block bg-[#C6A04E] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
+                      Most Popular
+                    </span>
+                  )}
+                  <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wide">{p.name}</p>
+                  <p className="text-2xl font-semibold text-[#1B2A4A] mt-1 tracking-tight">{p.price}<span className="text-sm font-normal text-[#9CA3AF]">/mo</span></p>
+                  <div className="mt-3 space-y-1.5 text-xs text-[#6B7280] mb-4">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#C6A04E]">✓</span> {p.repurposes} repurposes
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#C6A04E]">✓</span> {p.products} products
+                    </div>
+                  </div>
+                  <BillingButton plan={p.key} label="Upgrade" small />
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-[#9CA3AF]">
+              All plans include a 14-day free trial. Cancel anytime.
+            </p>
+          </div>
         )}
       </div>
     </div>
   )
 }
 
-function PlanCard({ name, price, plan, highlight }: { name: string; price: string; plan: string; highlight: boolean }) {
+function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className={`rounded-lg p-4 border text-center ${highlight ? 'border-[#C6A04E] bg-[#C6A04E]/5' : 'border-[#E8E6E1]'}`}>
-      <p className="text-xs font-semibold text-[#717185] mb-1">{name}</p>
-      <p className="text-xl font-bold text-[#0F1B2D] mb-3" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>{price}<span className="text-xs font-normal text-[#717185]">/mo</span></p>
-      <BillingButton plan={plan} label="Upgrade" small />
+    <div className="flex items-center justify-between py-1">
+      <span className="text-sm text-[#6B7280]">{label}</span>
+      <span className="text-sm font-medium text-[#1B2A4A]">{value}</span>
     </div>
   )
 }
