@@ -110,7 +110,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-xl text-[#6B7280] leading-relaxed mb-4 animate-fade-up animate-fade-up-delay-2 max-w-lg">
-                One paste. 30 days of social content. Sellable digital products. All in your voice.
+                Paste once. Get 30 days of social media content AND sellable digital products — ebooks, courses, workbooks, and more.
               </p>
 
               <p className="text-sm text-[#9CA3AF] mb-9 animate-fade-up animate-fade-up-delay-3">
@@ -155,10 +155,10 @@ export default function LandingPage() {
             <span className="text-sm font-bold text-[#1B2A4A] uppercase tracking-widest whitespace-nowrap">Replaces:</span>
             <div className="flex flex-wrap items-center justify-center gap-3">
               {[
-                { name: 'Repurpose.io', price: '$29/mo' },
-                { name: 'Designrr', price: '$27/mo' },
+                { name: 'Designrr', price: '$29/mo' },
                 { name: 'ChatGPT', price: '$20/mo' },
-                { name: 'Email tools', price: '$12/mo' },
+                { name: 'Canva', price: '$10/mo' },
+                { name: 'Email tool', price: '$29/mo' },
               ].map((tool, i) => (
                 <div key={tool.name} className="flex items-center gap-2">
                   <span className="bg-white border border-[#e8eaed] text-[#9CA3AF] text-xs font-medium px-3 py-1.5 rounded-full line-through">

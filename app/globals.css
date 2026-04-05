@@ -233,6 +233,30 @@ body {
   text-decoration: underline;
 }
 
+/* ── Accessibility & performance ── */
+
+/* Respect reduced-motion preference — kills decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-glow-pulse,
+  .animate-shimmer { animation: none !important; }
+
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-stream-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Touch-friendly tap targets — ensure minimum 44×44px */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ── Range input styling ── */
 /* Range input styling */
 input[type="range"] {
   -webkit-appearance: none;
