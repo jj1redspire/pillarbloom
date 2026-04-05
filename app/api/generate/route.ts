@@ -3,10 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 
 export const maxDuration = 60
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
-
 const OUTPUT_PROMPTS: Record<string, { title: string; prompt: string }> = {
   linkedin_post: {
     title: 'LinkedIn Post',
@@ -106,6 +102,8 @@ Total length: 250-350 words. No jargon. Crisp.`,
 }
 
 export async function POST(request: Request) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
   // Verify auth
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

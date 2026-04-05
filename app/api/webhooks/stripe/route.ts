@@ -1,14 +1,6 @@
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
-// Service role client for webhook (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 const PLAN_MAP: Record<string, string> = {
   price_starter_placeholder: 'starter',
   price_pro_placeholder: 'pro',
@@ -16,6 +8,13 @@ const PLAN_MAP: Record<string, string> = {
 }
 
 export async function POST(request: Request) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+  // Service role client for webhook (bypasses RLS)
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
   const body = await request.arrayBuffer()
   const signature = request.headers.get('stripe-signature')!
 

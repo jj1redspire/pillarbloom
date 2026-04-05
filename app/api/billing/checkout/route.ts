@@ -1,15 +1,15 @@
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
-const PRICE_IDS: Record<string, string> = {
-  starter: process.env.STRIPE_PRICE_STARTER!,
-  pro: process.env.STRIPE_PRICE_PRO!,
-  agency: process.env.STRIPE_PRICE_AGENCY!,
-}
-
 export async function POST(request: Request) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+  const PRICE_IDS: Record<string, string> = {
+    starter: process.env.STRIPE_PRICE_STARTER!,
+    pro: process.env.STRIPE_PRICE_PRO!,
+    agency: process.env.STRIPE_PRICE_AGENCY!,
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
